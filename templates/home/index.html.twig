@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+<div class="row">
+    {% for event in events %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center">{{ event.title }}</h5>
+                    <p class="card-text">{{ event.description }}</p>
+                    <p class="card-text">Date de début : {{ event.startDate|date('d/m/Y H:i') }}</p>
+                    <p class="card-text">Date de fin : {{ event.endDate|date('d/m/Y H:i') }}</p>
+                    <p class="card-text">Nombre de places : {{ event.nbMaxParticipants }}</p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-md-12">
+            <div class="alert alert-warning text-center" role="alert">Aucun événement à venir</div>
+        </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

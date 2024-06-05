@@ -10,7 +10,25 @@
     {% endblock %}
 </head>
 <body>
-{% block body %}{% endblock %}
+{% block content %}
+
+    {% block navbar %}
+        {% include 'partials/_navbar.html.twig' %}
+    {% endblock %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                {% block body %}
+
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% include "partials/_flash.html.twig" %}
+
 {% block javascripts %}
     {{ encore_entry_script_tags('main') }}
 {% endblock %}
