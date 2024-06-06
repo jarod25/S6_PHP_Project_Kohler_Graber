@@ -44,7 +44,7 @@ class KnpMenuBuilderService
     private function setAttributes($menu)
     {
         foreach ($menu as $item) {
-            $item->setLinkAttribute('class', 'nav-link text-decoration-none text-black');
+            $item->setLinkAttribute('class', 'nav-link text-decoration-none text-white');
             if ($item->getAttribute('dropdown')) {
                 $item->setChildrenAttribute('class', 'dropdown-menu');
                 $item->setAttribute('class', 'nav-item dropdown');
