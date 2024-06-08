@@ -5,11 +5,10 @@ namespace App\Service;
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class KnpMenuBuilderService
+readonly class KnpMenuBuilderService
 {
 
-
-    public function __construct(private readonly FactoryInterface $factory, private readonly AuthorizationCheckerInterface $authChecker)
+    public function __construct(private FactoryInterface $factory, private AuthorizationCheckerInterface $authChecker)
     {
     }
 
@@ -17,6 +16,7 @@ class KnpMenuBuilderService
     {
         $menu = $this->factory->createItem('root');
         $menu->addChild('Accueil', ['route' => 'app_home']);
+        $menu->addChild('Evenements', ['route' => 'app_event_index']);
         return $this->setAttributes($menu);
     }
 
