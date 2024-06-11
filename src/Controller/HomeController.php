@@ -18,7 +18,7 @@ class HomeController extends AbstractController
     public function index(): Response
     {
         return $this->render('home/index.html.twig', [
-            'events' => $this->eventRepository->findBy(['isPublic' => 'TRUE'])
+            'events' => $this->eventRepository->findAvailableEvents()
         ]);
     }
 }

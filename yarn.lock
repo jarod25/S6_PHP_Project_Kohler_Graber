@@ -1348,18 +1348,9 @@
     ckeditor5 "41.4.2"
     lodash-es "4.17.21"
 
-"@ckeditor/ckeditor5-image@41.4.2":
+"@ckeditor/ckeditor5-image@41.4.2", "@ckeditor/ckeditor5-image@^41.4.2":
   version "41.4.2"
   resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-image/-/ckeditor5-image-41.4.2.tgz"
-  integrity sha512-4AgXdvYr6tGzEqwAHVRl+LA8nPRER7vQthVBuT4g1FEkRB6w9kgRsPM2JfsGekoGd8GU0WnMaz8kAcL4C2urYg==
-  dependencies:
-    "@ckeditor/ckeditor5-ui" "41.4.2"
-    ckeditor5 "41.4.2"
-    lodash-es "4.17.21"
-
-"@ckeditor/ckeditor5-image@^41.4.2":
-  version "41.4.2"
-  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-image/-/ckeditor5-image-41.4.2.tgz#bbcde2ef2e32310431d655442e27896ed003d1c6"
   integrity sha512-4AgXdvYr6tGzEqwAHVRl+LA8nPRER7vQthVBuT4g1FEkRB6w9kgRsPM2JfsGekoGd8GU0WnMaz8kAcL4C2urYg==
   dependencies:
     "@ckeditor/ckeditor5-ui" "41.4.2"

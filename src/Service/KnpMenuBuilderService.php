@@ -12,60 +12,48 @@ readonly class KnpMenuBuilderService
     {
     }
 
-    public function createMainMenu(array $options)
+    public function createMainMenu()
     {
         $menu = $this->factory->createItem('root');
         $menu->addChild('Accueil', ['route' => 'app_home']);
-        $menu->addChild('Evenements', ['route' => 'app_event_index']);
+
+        $evenements = $menu->addChild('Évènements', ['uri' => '#']);
+        $evenements->setAttribute('dropdown', true);
+        $evenements->addChild('Liste des événements', ['route' => 'app_event_index']);
+        $evenements->addChild('Créer un événement', ['route' => 'app_event_new']);
+
+        if (!$this->authChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $menu->addChild('Se connecter', ['route' => 'app_login']);
+        } else {
+            $menu->addChild('Profil', ['route' => 'app_profile']);
+            $menu->addChild('Se déconnecter', ['route' => 'app_logout']);
+        }
+
         return $this->setAttributes($menu);
     }
-
-//    private function addItems($menu)
-//    {
-//        $menu->addChild('Home', ['route' => 'homepage']);
-//        $menu->addChild('Admin', ['route' => '']);
-//        $menu['Admin']->addChild('Home Admin', ['route' => 'espace-reserve']);
-//        $menu['Admin']->addChild('Home Sonata', ['route' => 'sonata_admin_dashboard']);
-//        $menu['Admin']->addChild('Sport', ['route' => 'app_sport_index']);
-//        $menu['Admin']->addChild('Delegation', ['route' => 'app_delegation_index']);
-//        $menu['Admin']->addChild('Sportif', ['route' => 'app_sportif_index']);
-//        $menu['Admin']->addChild('Ville', ['route' => 'app_ville_index']);
-//        $menu['Admin']->addChild('Evenements', ['route' => 'app_evenement_index']);
-//        $menu['Admin']->addChild('Actualités', ['route' => 'app_actualite_index']);
-//        $menu->addChild('User', ['route' => '']);
-//        $menu['User']->addChild('Liste des sport', ['route' => 'app_liste_sports']);
-//        $menu['User']->addChild('Liste des sportifs', ['route' => 'app_liste_sportifs']);
-//        $menu['User']->addChild('Liste des événements', ['route' => 'app_liste_evenements']);
-//        $menu['User']->addChild('Liste des actualités', ['route' => 'app_liste_actualites']);
-//
-//        return $menu;
-//    }
 
     private function setAttributes($menu)
     {
         foreach ($menu as $item) {
             $item->setLinkAttribute('class', 'nav-link text-decoration-none text-white');
             if ($item->getAttribute('dropdown')) {
-                $item->setChildrenAttribute('class', 'dropdown-menu');
-                $item->setAttribute('class', 'nav-item dropdown');
-                $item->setLinkAttribute('class', 'nav-link dropdown-toggle');
-                $item->setLinkAttribute('data-toggle', 'dropdown');
-            } else {
+                $item->setChildrenAttribute('class', 'dropdown-menu bg-dark text-white');
+                $item->setAttribute('class', 'nav-item dropdown bg-dark text-white');
+                $item->setLinkAttribute('class', 'nav-link dropdown-toggle text-decoration-none text-white');
+                $item->setLinkAttribute('data-bs-toggle', 'dropdown');
+                $item->setLinkAttribute('role', 'button');
+                $item->setLinkAttribute('aria-expanded', 'false');
+                foreach ($item->getChildren() as $child) {
+                    $child->setLinkAttribute('class', 'dropdown-item text-decoration-none text-white');
+                    $child->setAttribute('class', 'dropdown-item');
+                }
+            }
+            else {
                 $item->setAttribute('class', 'nav-item');
             }
         }
 
-        $menu->setChildrenAttribute('class', 'nav nav-pills');
+        $menu->setChildrenAttribute('class', 'navbar-nav me-auto mb-2 mb-lg-0');
         return $menu;
     }
-
-//    private function addItemsUser($menu)
-//    {
-//        $menu->addChild('Home', ['route' => 'homepage']);
-//        $menu->addChild('Liste des sport', ['route' => 'app_liste_sports']);
-//        $menu->addChild('Liste des sportifs', ['route' => 'app_liste_sportifs']);
-//        $menu->addChild('Liste des événements', ['route' => 'app_liste_evenements']);
-//        $menu->addChild('Liste des actualités', ['route' => 'app_liste_actualites']);
-//        return $menu;
-//    }
 }

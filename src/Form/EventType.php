@@ -11,7 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class EventType extends AbstractType
 {
@@ -22,55 +23,55 @@ class EventType extends AbstractType
                 'label' => 'Titre',
                 'required' => true,
                 'constraints' => [
-                    new NotNull(message: 'Veuillez saisir un titre'),
-                ]
+                    new NotBlank(message: 'Veuillez saisir un titre'),
+                ],
             ])
             ->add('description', TextareaType::class, [
                 'row_attr' => [
                     "data-controller" => "ckeditor",
                 ],
-                'attr'     => [
+                'attr' => [
                     "data-ckeditor-target" => "txt",
                 ],
                 'required' => true,
-                'label'=> 'Description',
+                'label' => 'Description',
                 'constraints' => [
-                    new NotNull(message: 'Veuillez saisir une description'),
-                ]
+                    new NotBlank(message: 'Veuillez saisir une description'),
+                ],
             ])
             ->add('startDate', DateTimeType::class, [
                 'label' => 'Date de début',
                 'required' => true,
                 'widget' => 'single_text',
                 'constraints' => [
-                    new NotNull(message: 'Veuillez saisir une date de début d\'événement'),
-                ]
+                    new NotBlank(message: 'Veuillez saisir une date de début d\'événement'),
+                ],
             ])
-            ->add('endDate',DateTimeType::class, [
+            ->add('endDate', DateTimeType::class, [
                 'label' => 'Date de fin',
                 'required' => true,
                 'widget' => 'single_text',
                 'constraints' => [
-                    new NotNull(message: 'Veuillez saisir une date de fin d\'événement'),
-                ]
+                    new NotBlank(message: 'Veuillez saisir une date de fin d\'événement'),
+                ],
             ])
             ->add('nbMaxParticipants', IntegerType::class, [
                 'label' => 'Nombre de participants',
                 'required' => true,
                 'constraints' => [
-                    new NotNull(message: 'Veuillez saisir un nombre de participants'),
-                ]
+                    new NotBlank(message: 'Veuillez saisir un nombre de participants'),
+                    new GreaterThan(0, message: 'Veuillez saisir un nombre de participants supérieur à 0')
+                ],
             ])
             ->add('isPublic', ChoiceType::class, [
                 'required' => true,
-                'label'    => 'Événement public ?',
-                'choices'  => [
+                'label' => 'Évènement public ?',
+                'choices' => [
                     'Oui' => true,
-                    'Non'   => false,
+                    'Non' => false,
                 ],
                 'expanded' => true,
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Form\User;
+
+use App\Entity\User;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
+
+class ChangePasswordType extends AbstractType
+{
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('oldPassword', PasswordType::class, [
+                'label' => 'Mot de passe actuel',
+                'attr' => [
+                    'placeholder' => 'Mot de passe actuel',
+                    'autocomplete' => 'current-password'
+                ],
+                'row_attr' => [
+                    'class' => 'form-floating',
+                ],
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez saisir votre mot de passe actuel',
+                    ]),
+                ],
+            ])
+            ->add('password', RepeatedType::class, [
+                'type'            => PasswordType::class,
+                'invalid_message' => 'Les deux mots de passe doivent être identiques.',
+                'first_options'  => [
+                    'attr'     => [
+                        'label' => 'Mot de passe',
+                        'placeholder' => 'Mot de passe',
+                        'autocomplete' => 'new-password'
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-floating',
+                    ],
+                ],
+                'second_options' => [
+                    'attr'     => [
+                        'label' => 'Confirmation du mot de passe',
+                        'placeholder' => 'Confirmation du mot de passe',
+                        'autocomplete' => 'new-password'
+                    ],
+                    'row_attr' => [
+                        'class' => 'form-floating',
+                    ],
+                ],
+                'attr'     => [
+                    'placeholder' => 'Mot de passe',
+                    'autocomplete' => 'new-password'
+                ],
+                'row_attr' => [
+                    'class' => 'form-floating',
+                ],
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new Length(
+                        min: 8,
+                        max: 4096,
+                        minMessage: 'Votre mot de passe doit comporter au moins {{ limit }} caractères',
+                        maxMessage: 'Votre mot de passe doit comporter maximum {{ limit }} caractères',
+                    ),
+                    new Regex(
+                        pattern: '#^(?=.*[A-Za-z])(?=.*\d).+$#',
+                        message: 'Votre mot de passe doit contenir au moins une lettre et un chiffre'
+                    )
+                ],
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => User::class,
+        ]);
+    }
+}

@@ -11,34 +11,40 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/event')]
+#[Route('/evenements')]
 class EventController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $em, private readonly EventRepository $eventRepository)
+    {
+    }
+
     #[Route('/', name: 'app_event_index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository): Response
+    public function index(): Response
     {
         return $this->render('event/index.html.twig', [
-            'events' => $eventRepository->findAll(),
+            'events' => $this->eventRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'app_event_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/creer-un-evenement', name: 'app_event_new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
     {
-        $event = new Event();
-        $form = $this->createForm(EventType::class, $event);
+        $form = $this->createForm(EventType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($event);
-            $entityManager->flush();
+            $event = $form->getData();
+            $event->setOwner($this->getUser());
+            $this->em->persist($event);
+            $this->em->flush();
 
+            $this->addFlash('success', 'Évènement créé avec succès');
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('event/new.html.twig', [
-            'event' => $event,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -50,15 +56,16 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Event $event, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/modifier', name: 'app_event_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Event $event): Response
     {
-        $form = $this->createForm(EventType::class, $event);
+        $form = $this->createForm(EventType::class, $event, ['validation_groups' => ['event']]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $this->em->flush();
 
+            $this->addFlash('success', 'Évènement mis à jour avec succès');
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -69,11 +76,11 @@ class EventController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_event_delete', methods: ['POST'])]
-    public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Event $event): Response
     {
         if ($this->isCsrfTokenValid('delete'.$event->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($event);
-            $entityManager->flush();
+            $this->em->remove($event);
+            $this->em->flush();
         }
 
         return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
