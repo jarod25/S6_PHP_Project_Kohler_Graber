@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Event>
@@ -29,5 +30,19 @@ class EventRepository extends ServiceEntityRepository
             ->setParameter('nbMaxParticipants', 1)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findPublicOrOwnedEvents(?UserInterface $user)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->where('e.isPublic = :public')
+            ->setParameter('public', true);
+
+        if ($user) {
+            $qb->orWhere('e.owner = :owner')
+                ->setParameter('owner', $user);
+        }
+
+        return $qb->getQuery();
     }
 }

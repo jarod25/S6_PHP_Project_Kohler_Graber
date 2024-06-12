@@ -43,6 +43,7 @@ class Event
     private ?User $owner = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'participantsEvents')]
+    #[ORM\JoinTable(name: 'events__participants')]
     private Collection $participants;
 
     public function __construct()

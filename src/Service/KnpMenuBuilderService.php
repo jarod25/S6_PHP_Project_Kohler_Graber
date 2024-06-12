@@ -20,11 +20,11 @@ readonly class KnpMenuBuilderService
         $evenements = $menu->addChild('Évènements', ['uri' => '#']);
         $evenements->setAttribute('dropdown', true);
         $evenements->addChild('Liste des événements', ['route' => 'app_event_index']);
-        $evenements->addChild('Créer un événement', ['route' => 'app_event_new']);
 
         if (!$this->authChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
             $menu->addChild('Se connecter', ['route' => 'app_login']);
         } else {
+            $evenements->addChild('Créer un événement', ['route' => 'app_event_new']);
             $menu->addChild('Profil', ['route' => 'app_profile']);
             $menu->addChild('Se déconnecter', ['route' => 'app_logout']);
         }
@@ -47,13 +47,16 @@ readonly class KnpMenuBuilderService
                     $child->setLinkAttribute('class', 'dropdown-item text-decoration-none text-white');
                     $child->setAttribute('class', 'dropdown-item');
                 }
-            }
-            else {
+            } else {
                 $item->setAttribute('class', 'nav-item');
+            }
+            if (in_array($item->getName(), ['Se connecter', 'Profil', 'Se déconnecter'])) {
+                $item->setAttribute('class', $item->getAttribute('class') . 'd-flex justify-content-end');
             }
         }
 
-        $menu->setChildrenAttribute('class', 'navbar-nav me-auto mb-2 mb-lg-0');
+        $menu->setChildrenAttribute('class', 'navbar-nav mb-2 mb-lg-0');
         return $menu;
     }
+
 }

@@ -17,8 +17,13 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
+        if ($this->getUser()) {
+            $query = $this->eventRepository->findAll();
+        } else {
+            $query = $this->eventRepository->findAvailableEvents();
+        }
         return $this->render('home/index.html.twig', [
-            'events' => $this->eventRepository->findAvailableEvents()
+            'events' => $query
         ]);
     }
 }

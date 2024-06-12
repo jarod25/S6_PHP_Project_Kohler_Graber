@@ -33,7 +33,7 @@ class AuthController extends AbstractController
         $lastUsername = $this->authenticationUtils->getLastUsername();
 
         if ($this->getUser()) {
-            return $this->redirectToRoute('account');
+            return $this->redirectToRoute('app_profile');
         }
 
 

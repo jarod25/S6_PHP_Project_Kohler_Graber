@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Welcome!{% endblock %}</title>
+    <title>{% block title %}Projet PHP S6 Kohler Graber{% endblock %}</title>
     {% block stylesheets %}
         {% for file in encore_entry_css_files('main') %}
             <link rel="stylesheet" href="{{ preload(file, { as: 'style', importance: 'high' }) }}">
@@ -20,7 +20,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-12 mt-4">
+            <div class="col-md-12">
                 {% block body %}
 
                 {% endblock %}
