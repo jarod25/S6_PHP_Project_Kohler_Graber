@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Event;
 
 use App\Entity\Event;
 use Symfony\Component\Form\AbstractType;

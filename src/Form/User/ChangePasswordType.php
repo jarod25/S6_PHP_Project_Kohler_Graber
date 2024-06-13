@@ -36,10 +36,10 @@ class ChangePasswordType extends AbstractType
                 ],
             ])
             ->add('password', RepeatedType::class, [
-                'type'            => PasswordType::class,
+                'type' => PasswordType::class,
                 'invalid_message' => 'Les deux mots de passe doivent être identiques.',
-                'first_options'  => [
-                    'attr'     => [
+                'first_options' => [
+                    'attr' => [
                         'label' => 'Mot de passe',
                         'placeholder' => 'Mot de passe',
                         'autocomplete' => 'new-password'
@@ -49,7 +49,7 @@ class ChangePasswordType extends AbstractType
                     ],
                 ],
                 'second_options' => [
-                    'attr'     => [
+                    'attr' => [
                         'label' => 'Confirmation du mot de passe',
                         'placeholder' => 'Confirmation du mot de passe',
                         'autocomplete' => 'new-password'
@@ -58,7 +58,7 @@ class ChangePasswordType extends AbstractType
                         'class' => 'form-floating',
                     ],
                 ],
-                'attr'     => [
+                'attr' => [
                     'placeholder' => 'Mot de passe',
                     'autocomplete' => 'new-password'
                 ],
@@ -79,8 +79,7 @@ class ChangePasswordType extends AbstractType
                         message: 'Votre mot de passe doit contenir au moins une lettre et un chiffre'
                     )
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

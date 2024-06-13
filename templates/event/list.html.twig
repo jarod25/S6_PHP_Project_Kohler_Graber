@@ -12,6 +12,8 @@
             </div>
         {% endif %}
 
+        {% include 'event/_filter_form.html.twig' %}
+
         <div class="row">
             {% for event in pagination.items %}
                 <div class="col-md-4">

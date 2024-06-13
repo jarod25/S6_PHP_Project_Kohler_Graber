@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Event;
-use App\Form\EventType;
+use App\Form\Event\EventFilterType;
+use App\Form\Event\EventType;
+use App\Model\EventSearch;
 use App\Repository\EventRepository;
 use App\Security\Voter\EventVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,19 +20,21 @@ class EventController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly EventRepository $eventRepository,
-        private readonly PaginatorInterface $paginator
-    ) {
+        private readonly EventRepository        $eventRepository,
+        private readonly PaginatorInterface     $paginator
+    )
+    {
     }
 
+
     #[Route('/', name: 'app_event_index', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function list(Request $request): Response
     {
-        if ($this->getUser()) {
-            $query = $this->eventRepository->findAll();
-        } else {
-            $query = $this->eventRepository->findBy(['isPublic' => true]);
-        }
+        $search = new EventSearch();
+        $form = $this->createForm(EventFilterType::class, $search);
+        $form->handleRequest($request);
+
+        $query = $this->eventRepository->findBySearchCriteria($search);
 
         $pagination = $this->paginator->paginate(
             $query,
@@ -38,8 +42,9 @@ class EventController extends AbstractController
             6
         );
 
-        return $this->render('event/index.html.twig', [
+        return $this->render('event/list.html.twig', [
             'pagination' => $pagination,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -110,7 +115,7 @@ class EventController extends AbstractController
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
-        if ($this->isCsrfTokenValid('delete'.$event->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $event->getId(), $request->request->get('_token'))) {
             $this->em->remove($event);
             $this->em->flush();
             $this->addFlash('success', 'Évènement supprimé avec succès');

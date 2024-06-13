@@ -24,9 +24,9 @@ class IsValidDateValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'PackageFormData');
         }
 
-        $today     = new \DateTime('now');
+        $today = new \DateTime('now');
         $startDate = $value->getStartDate();
-        $endDate   = $value->getEndDate();
+        $endDate = $value->getEndDate();
 
         if ($startDate < $today) {
             $this->context->buildViolation($constraint->messageStartDate)

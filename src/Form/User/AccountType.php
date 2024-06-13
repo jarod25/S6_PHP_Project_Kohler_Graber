@@ -16,11 +16,11 @@ class AccountType extends AbstractType
     {
         $builder
             ->add('firstname', TextType::class, [
-                'label'       => 'Prénom',
-                'attr'        => [
+                'label' => 'Prénom',
+                'attr' => [
                     'placeholder' => 'Prénom',
                 ],
-                'row_attr'    => [
+                'row_attr' => [
                     'class' => 'form-floating',
                 ],
                 'constraints' => [
@@ -30,11 +30,11 @@ class AccountType extends AbstractType
                 ],
             ])
             ->add('lastname', TextType::class, [
-                'label'       => 'Nom',
-                'attr'        => [
+                'label' => 'Nom',
+                'attr' => [
                     'placeholder' => 'Nom',
                 ],
-                'row_attr'    => [
+                'row_attr' => [
                     'class' => 'form-floating',
                 ],
                 'constraints' => [
@@ -43,7 +43,7 @@ class AccountType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('email',TextType::class, [
+            ->add('email', TextType::class, [
                 'label' => 'Email',
                 'attr' => [
                     'placeholder' => 'Email',
@@ -59,8 +59,7 @@ class AccountType extends AbstractType
                         message: 'L\'adresse email n\'est pas valide',
                     ),
                 ],
-            ])
-            ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

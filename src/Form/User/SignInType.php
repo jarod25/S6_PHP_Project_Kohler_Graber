@@ -19,7 +19,7 @@ class SignInType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('firstname',TextType::class, [
+            ->add('firstname', TextType::class, [
                 'label' => 'Prénom',
                 'attr' => [
                     'placeholder' => 'Prénom',
@@ -33,7 +33,7 @@ class SignInType extends AbstractType
                     ),
                 ],
             ])
-            ->add('lastname',TextType::class, [
+            ->add('lastname', TextType::class, [
                 'label' => 'Nom',
                 'attr' => [
                     'placeholder' => 'Nom',
@@ -47,7 +47,7 @@ class SignInType extends AbstractType
                     ),
                 ],
             ])
-            ->add('email',TextType::class, [
+            ->add('email', TextType::class, [
                 'label' => 'Email',
                 'attr' => [
                     'placeholder' => 'Email',
@@ -65,10 +65,10 @@ class SignInType extends AbstractType
                 ],
             ])
             ->add('password', RepeatedType::class, [
-                'type'            => PasswordType::class,
+                'type' => PasswordType::class,
                 'invalid_message' => 'Les deux mots de passe doivent être identiques.',
-                'first_options'  => [
-                    'attr'     => [
+                'first_options' => [
+                    'attr' => [
                         'label' => 'Mot de passe',
                         'placeholder' => 'Mot de passe',
                         'autocomplete' => 'new-password'
@@ -78,7 +78,7 @@ class SignInType extends AbstractType
                     ],
                 ],
                 'second_options' => [
-                    'attr'     => [
+                    'attr' => [
                         'label' => 'Confirmation du mot de passe',
                         'placeholder' => 'Confirmation du mot de passe',
                         'autocomplete' => 'new-password'
@@ -87,7 +87,7 @@ class SignInType extends AbstractType
                         'class' => 'form-floating',
                     ],
                 ],
-                'attr'     => [
+                'attr' => [
                     'placeholder' => 'Mot de passe',
                     'autocomplete' => 'new-password'
                 ],
@@ -108,8 +108,7 @@ class SignInType extends AbstractType
                         message: 'Votre mot de passe doit contenir au moins une lettre et un chiffre'
                     )
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

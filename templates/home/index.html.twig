@@ -6,8 +6,8 @@
     <div class="container mt-4">
         <div class="row">
             {% for event in events %}
-                <div class="col-md-4 mb-3">
-                    <div class="card">
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title">
                                 {{ event.title|slice(0, 24) }}
@@ -31,12 +31,13 @@
                                 <strong>Évènement public : </strong>
                                 {{ event.isPublic ? 'Oui' : 'Non' }}
                             </p>
+                            <a href="{{ path('app_event_show', {id: event.id}) }}" class="btn btn-primary">Détails</a>
                         </div>
                     </div>
                 </div>
             {% else %}
-                <div class="col-md-12">
-                    <div class="alert alert-warning text-center" role="alert">Aucun événement à venir</div>
+                <div class="col-12">
+                    <p class="alert alert-info text-center">Aucun événement trouvé.</p>
                 </div>
             {% endfor %}
         </div>

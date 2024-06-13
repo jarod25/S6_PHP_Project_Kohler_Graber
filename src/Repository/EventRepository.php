@@ -3,9 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Event;
+use App\Model\EventSearch;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Event>
@@ -22,7 +22,8 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function findAvailableEvents() {
+    public function findAvailableEvents()
+    {
         return $this->createQueryBuilder('e')
             ->andWhere('e.isPublic = :isPublic')
             ->andWhere('e.nbMaxParticipants > :nbMaxParticipants')
@@ -32,17 +33,31 @@ class EventRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findPublicOrOwnedEvents(?UserInterface $user)
+    public function findBySearchCriteria(EventSearch $search)
     {
-        $qb = $this->createQueryBuilder('e')
-            ->where('e.isPublic = :public')
-            ->setParameter('public', true);
+        $qb = $this->createQueryBuilder('e');
 
-        if ($user) {
-            $qb->orWhere('e.owner = :owner')
-                ->setParameter('owner', $user);
+        if ($search->title !== null) {
+            $qb->andWhere('e.title LIKE :title')
+                ->setParameter('title', '%' . $search->title . '%');
+        }
+        if ($search->startDate !== null) {
+            $qb->andWhere('e.startDate >= :startDate')
+                ->setParameter('startDate', $search->startDate->format('Y-m-d'));
+        }
+        if ($search->isPublic !== null) {
+            $qb->andWhere('e.isPublic = :isPublic')
+                ->setParameter('isPublic', $search->isPublic);
+        }
+        if ($search->isFull !== null) {
+            if ($search->isFull === true) {
+                $qb->andWhere('SIZE(e.participants) < e.nbMaxParticipants');
+            } else {
+                $qb->andWhere('SIZE(e.participants) = e.nbMaxParticipants');
+            }
         }
 
         return $qb->getQuery();
     }
+
 }

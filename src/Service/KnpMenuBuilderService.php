@@ -8,7 +8,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 readonly class KnpMenuBuilderService
 {
 
-    public function __construct(private FactoryInterface $factory, private AuthorizationCheckerInterface $authChecker)
+    public function __construct(
+        private FactoryInterface              $factory,
+        private AuthorizationCheckerInterface $authChecker
+    )
     {
     }
 

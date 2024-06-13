@@ -18,13 +18,14 @@ class AuthController extends AbstractController
 {
 
     public function __construct(
-        private readonly AuthenticationUtils $authenticationUtils,
-        private readonly EntityManagerInterface $em,
+        private readonly AuthenticationUtils         $authenticationUtils,
+        private readonly EntityManagerInterface      $em,
         private readonly UserPasswordHasherInterface $userPasswordHasher,
-        private readonly UserAuthenticatorInterface $userAuthenticator,
-        private readonly AppAuthenticator $authenticator
+        private readonly UserAuthenticatorInterface  $userAuthenticator,
+        private readonly AppAuthenticator            $authenticator
     )
-    {}
+    {
+    }
 
     #[Route('/connexion', name: 'app_login')]
     public function login(Request $request): Response
@@ -53,7 +54,7 @@ class AuthController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $alreadyExistUser = $this->em->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
-            if($alreadyExistUser) {
+            if ($alreadyExistUser) {
                 $this->addFlash('danger', 'Un compte existe déjà avec cette adresse email, essayez de vous connecter !');
                 return $this->redirectToRoute('app_login');
             }

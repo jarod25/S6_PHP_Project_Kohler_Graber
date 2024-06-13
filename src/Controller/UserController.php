@@ -16,7 +16,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
 
-    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly UserRepository $userRepository)
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UserRepository         $userRepository
+    )
     {
     }
 
@@ -43,7 +46,7 @@ class UserController extends AbstractController
                     $userExist = $this->userRepository->findOneBy(['email' => $form_infos->get('email')->getData()]);
                     if ($userExist) {
                         $form_infos->get('email')->addError(new FormError('Cet email est déjà utilisé sur un autre compte.'));
-                        return $this->render('user/profile.html.twig' ,[
+                        return $this->render('user/profile.html.twig', [
                             'form_infos' => $form_infos->createView(),
                             'form_pwd' => $form_pwd->createView(),
                         ]);
@@ -60,7 +63,7 @@ class UserController extends AbstractController
                 $oldPassword = $form_pwd->get('oldPassword')->getData();
                 if (!$userPasswordHasher->isPasswordValid($user, $oldPassword)) {
                     $form_pwd->get('oldPassword')->addError(new FormError('Le mot de passe actuel est incorrect.'));
-                    return $this->render('user/profile.html.twig' ,[
+                    return $this->render('user/profile.html.twig', [
                         'form_infos' => $form_infos->createView(),
                         'form_pwd' => $form_pwd->createView(),
                     ]);
@@ -68,7 +71,7 @@ class UserController extends AbstractController
 
                 if ($form_pwd->get('oldPassword')->getData() === $form_pwd->get('password')->getData()) {
                     $form_pwd->get('password')->addError(new FormError('Le nouveau mot de passe doit être différent de l\'ancien.'));
-                    return $this->render('user/profile.html.twig' ,[
+                    return $this->render('user/profile.html.twig', [
                         'form_infos' => $form_infos->createView(),
                         'form_pwd' => $form_pwd->createView(),
                     ]);
@@ -87,7 +90,7 @@ class UserController extends AbstractController
                 $this->addFlash('success', 'Votre mot de passe a bien été mis à jour.');
                 return $this->redirectToRoute('app_profile');
             }
-            return $this->render('user/profile.html.twig' ,[
+            return $this->render('user/profile.html.twig', [
                 'form_infos' => $form_infos->createView(),
                 'form_pwd' => $form_pwd->createView(),
             ]);
