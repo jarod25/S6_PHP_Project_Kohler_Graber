@@ -38,14 +38,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating" data-controller="pwd-eye">
-                                    {{ form_widget(form.password.first, {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe', 'data-pwd-eye-target': 'input'}}) }}
+                            <div class="col-12" data-controller="pwd-strength" data-pwd-strength-strength-value="4" data-pwd-strength-position-value="left">
+                                <div data-controller="pwd-eye" class="form-floating">
+                                    {{ form_widget(form.password.first, {'attr': {'class': 'form-control',  'placeholder': 'Mot de passe', 'data-pwd-eye-target': 'input', 'data-action': 'pwd-strength#handleInput'}}) }}
                                     {{ form_label(form.password.first, 'Mot de passe', {'label_attr': {'for': form.password.first.vars.id}}) }}
-                                    <div class="text-danger">
-                                        {{ form_errors(form.password.first) }}
-                                    </div>
                                 </div>
+                                <div class="text-danger">
+                                    {{ form_errors(form.password.first) }}
+                                </div>
+                                <div class="tips-popover"></div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating" data-controller="pwd-eye">

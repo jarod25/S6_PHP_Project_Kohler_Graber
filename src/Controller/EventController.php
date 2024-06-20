@@ -32,14 +32,13 @@ class EventController extends AbstractController
     {
     }
 
-
     #[Route('/', name: 'app_event_index', methods: ['GET'])]
     public function list(Request $request): Response
     {
         $user = $this->getUser();
 
         $search = new EventSearch();
-        $form = $this->createForm(EventFilterType::class, $search, ['user' => $user]);
+        $form   = $this->createForm(EventFilterType::class, $search, ['user' => $user]);
         $form->handleRequest($request);
 
         if ($user)
@@ -59,8 +58,8 @@ class EventController extends AbstractController
 
         return $this->render('event/list.html.twig', [
             'pagination' => $pagination,
-            'form' => $form->createView(),
-            'user' => $user ?? null,
+            'form'       => $form->createView(),
+            'user'       => $user ?? null,
         ]);
     }
 
@@ -69,6 +68,7 @@ class EventController extends AbstractController
     {
         if (!$this->getUser()) {
             $this->addFlash('danger', 'Vous devez être connecté pour créer un évènement');
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -83,6 +83,7 @@ class EventController extends AbstractController
             $this->em->flush();
 
             $this->addFlash('success', 'Évènement créé avec succès');
+
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -94,6 +95,14 @@ class EventController extends AbstractController
     #[Route('/{id}', name: 'app_event_show', methods: ['GET'])]
     public function show(Event $event): Response
     {
+        if (!$this->isGranted(EventVoter::VIEW, $event)) {
+            $this->addFlash('danger', "Vous n'avez pas la permission de voir cet évènement.");
+
+            return $this->redirectToRoute('app_event_index');
+        }
+
+        $event->availablePlaces = $this->availablePlacesService->calculateAvailablePlaces($event);
+
         return $this->render('event/show.html.twig', [
             'event' => $event,
         ]);
@@ -104,6 +113,7 @@ class EventController extends AbstractController
     {
         if (!$this->isGranted(EventVoter::EDIT, $event)) {
             $this->addFlash('danger', "Vous n'avez pas la permission de modifier cet évènement.");
+
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
@@ -114,12 +124,13 @@ class EventController extends AbstractController
             $this->em->flush();
 
             $this->addFlash('success', 'Évènement mis à jour avec succès');
+
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('event/edit.html.twig', [
             'event' => $event,
-            'form' => $form->createView(),
+            'form'  => $form->createView(),
         ]);
     }
 
@@ -128,6 +139,7 @@ class EventController extends AbstractController
     {
         if (!$this->isGranted(EventVoter::DELETE, $event)) {
             $this->addFlash('danger', "Vous n'avez pas la permission de supprimer cet évènement.");
+
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
@@ -146,16 +158,19 @@ class EventController extends AbstractController
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('danger', 'Vous devez être connecté pour vous inscrire');
+
             return $this->redirectToRoute('app_login');
         }
 
         if ($event->getParticipants()->contains($user)) {
             $this->addFlash('error', 'Vous êtes déjà inscrit à cet événement.');
+
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
-        if ($event->getParticipants()->count() >= $event->getNbMaxParticipants()) {
+        if ($this->availablePlacesService->calculateAvailablePlaces($event) <= 0) {
             $this->addFlash('error', 'Le nombre maximal de participants est atteint.');
+
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
@@ -165,12 +180,13 @@ class EventController extends AbstractController
         // Envoyer un email de confirmation
         $email = new ParticipantRegistrationEvent($user->getEmail());
         $email->setParams([
-            'user' => $user,
+            'user'  => $user,
             'event' => $event,
         ]);
         $this->mailService->sendEmail($email);
 
         $this->addFlash('success', 'Inscription réussie.');
+
         return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
     }
 
@@ -180,11 +196,13 @@ class EventController extends AbstractController
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('danger', 'Vous devez être connecté pour vous désinscrire');
+
             return $this->redirectToRoute('app_login');
         }
 
         if (!$event->getParticipants()->contains($user)) {
             $this->addFlash('error', 'Vous n\'êtes pas inscrit à cet événement.');
+
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
@@ -193,12 +211,13 @@ class EventController extends AbstractController
 
         $email = new ParticipantUnRegistrationEvent($user->getEmail());
         $email->setParams([
-            'user' => $user,
+            'user'  => $user,
             'event' => $event,
         ]);
         $this->mailService->sendEmail($email);
 
         $this->addFlash('success', 'Désinscription réussie.');
+
         return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
     }
 }

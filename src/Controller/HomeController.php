@@ -31,6 +31,10 @@ class HomeController extends AbstractController
             $query = $this->eventRepository->findAvailableEvents();
         }
 
+        $query = array_filter($query, function ($event) {
+            return $this->isGranted(EventVoter::VIEW, $event);
+        });
+
         foreach ($query as $event) {
             $event->availablePlaces = $this->availablePlacesService->calculateAvailablePlaces($event);
         }
@@ -52,6 +56,7 @@ class HomeController extends AbstractController
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('danger', 'Vous devez être connecté pour voir vos événements');
+
             return $this->redirectToRoute('app_login');
         }
 

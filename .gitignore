@@ -56,3 +56,4 @@ public/build/
 .idea/
 /var/cache/
 /var/log/
+/.phpunit.result.cache

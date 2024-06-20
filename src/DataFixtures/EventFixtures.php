@@ -28,19 +28,25 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
         }
 
         for ($i = 0; $i < 20; $i++) {
-            $startDate = $faker->dateTimeBetween((new \DateTime('now'))->format('Y-m-d'), '2024-12-31');
-            $endDate = $faker->dateTimeBetween($startDate, '2024-12-31');
+            $startDate = $faker->dateTimeBetween((new \DateTime('now'))->format('Y-m-d 09:00:00'), '2024-12-31 17:00:00');
+            $startHour = rand(9, 12);
+            $startDate->setTime($startHour, 00);
 
-            while ($endDate < $startDate) {
-                $endDate = $faker->dateTimeBetween($startDate, '2024-12-31');
+            $endDate = clone $startDate;
+            $daysToAdd = rand(0, 7);
+
+            if ($daysToAdd > 0) {
+                $endDate->modify("+$daysToAdd days");
             }
+            $endHour = rand(15,19);
+            $endDate->setTime($endHour, 00);
 
             $event = new Event();
             $event->setTitle($faker->words(5, true));
             $event->setDescription($faker->words(30, true));
             $event->setStartDate($startDate);
             $event->setEndDate($endDate);
-            $event->setIsPublic($faker->boolean(50));
+            $event->setIsPublic($faker->boolean(60));
             $event->setNbMaxParticipants($faker->randomNumber(2));
             $event->setOwner($users[array_rand($users)]);
 

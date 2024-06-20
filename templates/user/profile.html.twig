@@ -51,14 +51,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating" data-controller="pwd-eye">
-                                    {{ form_widget(form_pwd.password.first, {'attr': {'class': 'form-control', 'placeholder': 'Nouveau mot de passe', 'data-pwd-eye-target': 'input'}}) }}
-                                    {{ form_label(form_pwd.password.first, 'Nouveau mot de passe', {'label_attr': {'for': form_pwd.password.first.vars.id}}) }}
-                                    <div class="text-danger">
-                                        {{ form_errors(form_pwd.password.first) }}
-                                    </div>
+                            <div class="col-12" data-controller="pwd-strength" data-pwd-strength-strength-value="4" data-pwd-strength-position-value="left">
+                                <div data-controller="pwd-eye" class="form-floating">
+                                    {{ form_widget(form.password.first, {'attr': {'class': 'form-control',  'placeholder': 'Mot de passe', 'data-pwd-eye-target': 'input', 'data-action': 'pwd-strength#handleInput'}}) }}
+                                    {{ form_label(form.password.first, 'Mot de passe', {'label_attr': {'for': form.password.first.vars.id}}) }}
                                 </div>
+                                <div class="text-danger">
+                                    {{ form_errors(form.password.first) }}
+                                </div>
+                                <div class="tips-popover"></div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating" data-controller="pwd-eye">
@@ -71,7 +72,7 @@
                             </div>
                         </div>
                         <div class="text-end mb-2">
-                            <button type="submit" class="btn btn-primary">Modifier mon mot de passe</button>
+                            <button type="submit" class="btn btn-primary" value="submit-pwd">Modifier mon mot de passe</button>
                         </div>
                         {{ form_end(form_pwd) }}
                     </div>

@@ -74,10 +74,15 @@ class ChangePasswordType extends AbstractType
                         minMessage: 'Votre mot de passe doit comporter au moins {{ limit }} caractères',
                         maxMessage: 'Votre mot de passe doit comporter maximum {{ limit }} caractères',
                     ),
-                    new Regex(
-                        pattern: '#^(?=.*[A-Za-z])(?=.*\d).+$#',
-                        message: 'Votre mot de passe doit contenir au moins une lettre et un chiffre'
-                    )
+                    new Regex([
+                        'pattern' => match ($_ENV['PASSWORD_STRENGTH_VALUE']) {
+                            "1" => '/^(?=.*[a-z]).{8,}$/',
+                            "2" => '/^(?=.*[a-z])(?=.*[A-Z]).{8,}$/',
+                            "3" => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/',
+                            "4" => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$/',
+                        },
+                        'message' => 'Le mot de passe ne respecte pas les critères de sécurité',
+                    ]),
                 ],
             ]);
     }

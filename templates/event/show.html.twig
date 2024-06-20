@@ -20,17 +20,27 @@
                         <p><strong>Date de début :</strong> {{ event.startDate|date('d/m/Y H:i') }}</p>
                         <p><strong>Date de fin :</strong> {{ event.endDate|date('d/m/Y H:i') }}</p>
                         <p><strong>Nombre de participants maximum :</strong> {{ event.nbMaxParticipants }}</p>
+                        <p><strong>Nombre de places restantes :</strong> {{ event.availablePlaces }}</p>
                         <p><strong>Évènement public :</strong> {{ event.isPublic ? 'Oui' : 'Non' }}</p>
                     </div>
                 </div>
-                {% if not event.participants.contains(app.user) %}
-                    <form action="{{ path('app_event_register', {id: event.id}) }}" method="post">
-                        <button class="btn btn-primary" type="submit">S'inscrire</button>
-                    </form>
+                {% if app.user %}
+                    {% if event.availablePlaces > 0 %}
+                        {% if not event.participants.contains(app.user) %}
+                            <form action="{{ path('app_event_register', {id: event.id}) }}" method="post">
+                                <button class="btn btn-primary" type="submit">S'inscrire</button>
+                            </form>
+                        {% else %}
+                            <form action="{{ path('app_event_unregister', {id: event.id}) }}" method="post">
+                                <button class="btn btn-primary" type="submit">Se désinscrire</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-danger">Il n'y a plus de place disponible pour cet évènement.</p>
+                    {% endif %}
                 {% else %}
-                    <form action="{{ path('app_event_unregister', {id: event.id}) }}" method="post">
-                        <button class="btn btn-primary" type="submit">Se désinscrire</button>
-                    </form>
+                    <p class="text-danger">Vous devez être connecté pour vous inscrire à cet évènement.</p>
+                    <a class="btn btn-primary" href="{{ path('app_login') }}">Se connecter</a>
                 {% endif %}
             </div>
         </div>
