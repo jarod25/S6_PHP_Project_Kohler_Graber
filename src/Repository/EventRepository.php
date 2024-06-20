@@ -33,7 +33,7 @@ class EventRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findBySearchCriteria(EventSearch $search)
+    public function findBySearchCriteria(EventSearch $search, $user = null)
     {
         $qb = $this->createQueryBuilder('e');
 
@@ -45,10 +45,16 @@ class EventRepository extends ServiceEntityRepository
             $qb->andWhere('e.startDate >= :startDate')
                 ->setParameter('startDate', $search->startDate->format('Y-m-d'));
         }
-        if ($search->isPublic !== null) {
+        if ($user !== null) {
+            if ($search->isPublic !== null) {
+                $qb->andWhere('e.isPublic = :isPublic')
+                    ->setParameter('isPublic', $search->isPublic);
+            }
+        } else {
             $qb->andWhere('e.isPublic = :isPublic')
-                ->setParameter('isPublic', $search->isPublic);
+                ->setParameter('isPublic', 1);
         }
+
         if ($search->isFull !== null) {
             if ($search->isFull === true) {
                 $qb->andWhere('SIZE(e.participants) < e.nbMaxParticipants');
@@ -57,7 +63,7 @@ class EventRepository extends ServiceEntityRepository
             }
         }
 
-        return $qb->getQuery();
+        return $qb->getQuery()->getResult();
     }
 
 }

@@ -23,6 +23,15 @@
                         <p><strong>Évènement public :</strong> {{ event.isPublic ? 'Oui' : 'Non' }}</p>
                     </div>
                 </div>
+                {% if not event.participants.contains(app.user) %}
+                    <form action="{{ path('app_event_register', {id: event.id}) }}" method="post">
+                        <button class="btn btn-primary" type="submit">S'inscrire</button>
+                    </form>
+                {% else %}
+                    <form action="{{ path('app_event_unregister', {id: event.id}) }}" method="post">
+                        <button class="btn btn-primary" type="submit">Se désinscrire</button>
+                    </form>
+                {% endif %}
             </div>
         </div>
 

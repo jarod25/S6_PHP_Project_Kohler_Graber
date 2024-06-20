@@ -6,32 +6,46 @@
     <div class="container mt-4">
         <div class="row">
             {% for event in events %}
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                {{ event.title|slice(0, 24) }}
-                            </h5>
+                <div class="col-6">
+                    <div class="card border-0 mb-4 shadow rounded">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between p-2">
+                                <h4 class="card-title">
+                                    <strong>
+                                        {{ event.title|slice(0, 24) }}
+                                    </strong>
+                                </h4>
+                                <p class="card-text text-secondary">
+                                    <b>
+                                        <em class="{{ event.isPublic ? 'text-success' : 'text-danger' }}">
+                                            Évènement {{ event.isPublic ? 'public' : 'privé' }}
+                                        </em>
+                                    </b>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card-body bg-light">
                             <p class="card-text">
-                                {{ event.description|slice(0, 30) }}
+                                {{ event.description|slice(0, 200) }}
                             </p>
+                            <div class="d-flex justify-content-between">
+                                <p class="card-text">
+                                    <strong>Début : </strong>
+                                    {{ event.startDate|date('d/m/Y H:i') }}
+                                </p>
+                                <p class="card-text">
+                                    <strong>Fin : </strong>
+                                    {{ event.endDate|date('d/m/Y H:i') }}
+                                </p>
+                            </div>
                             <p class="card-text">
-                                <strong>Date de début : </strong>
-                                {{ event.startDate|date('d/m/Y H:i') }}
+                                <strong>Nombre de places disponibles : </strong>
+                                {{ event.availablePlaces }}
                             </p>
-                            <p class="card-text">
-                                <strong>Date de fin : </strong>
-                                {{ event.endDate|date('d/m/Y H:i') }}
-                            </p>
-                            <p class="card-text">
-                                <strong>Nombre de participants maximum : </strong>
-                                {{ event.nbMaxParticipants }}
-                            </p>
-                            <p class="card-text">
-                                <strong>Évènement public : </strong>
-                                {{ event.isPublic ? 'Oui' : 'Non' }}
-                            </p>
-                            <a href="{{ path('app_event_show', {id: event.id}) }}" class="btn btn-primary">Détails</a>
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ path('app_event_show', {id: event.id}) }}"
+                                   class="btn btn-primary">Détails</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -40,6 +54,9 @@
                     <p class="alert alert-info text-center">Aucun événement trouvé.</p>
                 </div>
             {% endfor %}
+        </div>
+        <div class="d-flex justify-content-center mt-4">
+            {{ knp_pagination_render(events, 'bundles/KnpPaginatorBundle/pagination.html.twig') }}
         </div>
     </div>
 {% endblock %}

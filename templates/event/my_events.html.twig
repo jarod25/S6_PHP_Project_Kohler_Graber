@@ -1,19 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Événements{% endblock %}
+{% block title %}Mes événements{% endblock %}
 
 {% block body %}
     <div class="container mt-4">
-        <h1 class="mb-4 text-center">Liste des Événements</h1>
-
-        {% if app.user %}
-            <div class="d-flex justify-content-end mb-4">
-                <a href="{{ path('app_event_new') }}" class="btn btn-primary">Créer un événement</a>
-            </div>
-        {% endif %}
-
-        {% include 'event/_filter_form.html.twig' %}
-
+        <h1 class="mb-4 text-center">Mes événements</h1>
         <div class="row">
             {% for event in pagination.items %}
                 <div class="col-6">
@@ -61,7 +52,7 @@
                 </div>
             {% else %}
                 <div class="col-12">
-                    <p class="alert alert-info text-center">Aucun événement trouvé.</p>
+                    <p class="alert alert-info text-center">Vous n'êtes inscrits à aucun événement.</p>
                 </div>
             {% endfor %}
         </div>

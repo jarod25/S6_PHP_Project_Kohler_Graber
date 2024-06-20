@@ -23,8 +23,9 @@ class EventFilterType extends AbstractType
                 'widget' => 'single_text',
                 'label' => 'Date de début',
                 'required' => false,
-            ])
-            ->add('isPublic', ChoiceType::class, [
+            ]);
+        if ($options['user']) {
+            $builder->add('isPublic', ChoiceType::class, [
                 'label' => 'Évènement public',
                 'choices' => [
                     'Oui' => true,
@@ -32,16 +33,18 @@ class EventFilterType extends AbstractType
                 ],
                 'multiple' => false,
                 'required' => false,
-            ])
-            ->add('isFull', ChoiceType::class, [
-                'label' => 'Places disponibles ?',
-                'choices' => [
-                    'Oui' => true,
-                    'Non' => false,
-                ],
-                'multiple' => false,
-                'required' => false,
             ]);
+        }
+
+        $builder->add('isFull', ChoiceType::class, [
+            'label' => 'Places disponibles ?',
+            'choices' => [
+                'Oui' => true,
+                'Non' => false,
+            ],
+            'multiple' => false,
+            'required' => false,
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

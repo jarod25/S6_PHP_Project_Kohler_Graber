@@ -9,16 +9,18 @@
         {% endfor %}
     {% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 {% block content %}
 
     {% block navbar %}
         {% include 'partials/_navbar.html.twig' %}
     {% endblock %}
 
-    {% include 'partials/_flash.html.twig' %}
+    <div class="top-10">
+        {% include 'partials/_flash.html.twig' %}
+    </div>
 
-    <div class="container">
+    <div class="container flex-grow-1">
         <div class="row">
             <div class="col-md-12">
                 {% block body %}
@@ -27,9 +29,12 @@
             </div>
         </div>
     </div>
-{% endblock %}
 
-{% include "partials/_flash.html.twig" %}
+    {% block footer %}
+        {% include "partials/_footer.html.twig" %}
+    {% endblock %}
+
+{% endblock %}
 
 {% block javascripts %}
     {{ encore_entry_script_tags('main') }}

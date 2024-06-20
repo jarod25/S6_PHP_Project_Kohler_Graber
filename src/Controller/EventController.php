@@ -3,11 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Event\Mail\ParticipantRegistrationEvent;
+use App\Event\Mail\ParticipantUnregistrationEvent;
 use App\Form\Event\EventFilterType;
 use App\Form\Event\EventType;
 use App\Model\EventSearch;
 use App\Repository\EventRepository;
 use App\Security\Voter\EventVoter;
+use App\Service\AvailablePlacesService;
+use App\Service\MailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,7 +25,9 @@ class EventController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly EventRepository        $eventRepository,
-        private readonly PaginatorInterface     $paginator
+        private readonly PaginatorInterface     $paginator,
+        private readonly MailService            $mailService,
+        private readonly AvailablePlacesService $availablePlacesService,
     )
     {
     }
@@ -30,11 +36,20 @@ class EventController extends AbstractController
     #[Route('/', name: 'app_event_index', methods: ['GET'])]
     public function list(Request $request): Response
     {
+        $user = $this->getUser();
+
         $search = new EventSearch();
-        $form = $this->createForm(EventFilterType::class, $search);
+        $form = $this->createForm(EventFilterType::class, $search, ['user' => $user]);
         $form->handleRequest($request);
 
-        $query = $this->eventRepository->findBySearchCriteria($search);
+        if ($user)
+            $query = $this->eventRepository->findBySearchCriteria($search, $user);
+        else
+            $query = $this->eventRepository->findBySearchCriteria($search);
+
+        foreach ($query as $event) {
+            $event->availablePlaces = $this->availablePlacesService->calculateAvailablePlaces($event);
+        }
 
         $pagination = $this->paginator->paginate(
             $query,
@@ -45,6 +60,7 @@ class EventController extends AbstractController
         return $this->render('event/list.html.twig', [
             'pagination' => $pagination,
             'form' => $form->createView(),
+            'user' => $user ?? null,
         ]);
     }
 
@@ -122,5 +138,67 @@ class EventController extends AbstractController
         }
 
         return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/register', name: 'app_event_register', methods: ['GET', 'POST'])]
+    public function register(Request $request, Event $event): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('danger', 'Vous devez être connecté pour vous inscrire');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($event->getParticipants()->contains($user)) {
+            $this->addFlash('error', 'Vous êtes déjà inscrit à cet événement.');
+            return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
+        }
+
+        if ($event->getParticipants()->count() >= $event->getNbMaxParticipants()) {
+            $this->addFlash('error', 'Le nombre maximal de participants est atteint.');
+            return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
+        }
+
+        $event->addParticipant($user);
+        $this->em->flush();
+
+        // Envoyer un email de confirmation
+        $email = new ParticipantRegistrationEvent($user->getEmail());
+        $email->setParams([
+            'user' => $user,
+            'event' => $event,
+        ]);
+        $this->mailService->sendEmail($email);
+
+        $this->addFlash('success', 'Inscription réussie.');
+        return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
+    }
+
+    #[Route('/{id}/unregister', name: 'app_event_unregister', methods: ['GET', 'POST'])]
+    public function unregister(Request $request, Event $event): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('danger', 'Vous devez être connecté pour vous désinscrire');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if (!$event->getParticipants()->contains($user)) {
+            $this->addFlash('error', 'Vous n\'êtes pas inscrit à cet événement.');
+            return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
+        }
+
+        $event->removeParticipant($user);
+        $this->em->flush();
+
+        $email = new ParticipantUnRegistrationEvent($user->getEmail());
+        $email->setParams([
+            'user' => $user,
+            'event' => $event,
+        ]);
+        $this->mailService->sendEmail($email);
+
+        $this->addFlash('success', 'Désinscription réussie.');
+        return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
     }
 }

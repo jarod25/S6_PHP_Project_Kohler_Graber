@@ -24,12 +24,9 @@ readonly class KnpMenuBuilderService
         $evenements->setAttribute('dropdown', true);
         $evenements->addChild('Liste des événements', ['route' => 'app_event_index']);
 
-        if (!$this->authChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $menu->addChild('Se connecter', ['route' => 'app_login']);
-        } else {
+        if ($this->authChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
             $evenements->addChild('Créer un événement', ['route' => 'app_event_new']);
-            $menu->addChild('Profil', ['route' => 'app_profile']);
-            $menu->addChild('Se déconnecter', ['route' => 'app_logout']);
+            $evenements->addChild('Mes événements', ['route' => 'app_event_my_events']);
         }
 
         return $this->setAttributes($menu);
@@ -52,9 +49,6 @@ readonly class KnpMenuBuilderService
                 }
             } else {
                 $item->setAttribute('class', 'nav-item');
-            }
-            if (in_array($item->getName(), ['Se connecter', 'Profil', 'Se déconnecter'])) {
-                $item->setAttribute('class', $item->getAttribute('class') . 'd-flex justify-content-end');
             }
         }
 
