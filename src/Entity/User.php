@@ -35,7 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'owner')]
     private Collection $events;
 
-    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'participants')]
+    #[ORM\OneToMany(targetEntity: EventParticipants::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
     private Collection $participantsEvents;
 
     #[ORM\Column(type: Types::ARRAY)]

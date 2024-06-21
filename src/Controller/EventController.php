@@ -180,6 +180,10 @@ class EventController extends AbstractController
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
+        if ($event->isIsPayable() && $event->getPrice() > 0) {
+            return $this->redirectToRoute('app_pay_event', ['id' => $event->getId()]);
+        }
+
         $event->addParticipant($user);
         $this->em->flush();
 

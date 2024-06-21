@@ -4,22 +4,16 @@ namespace App\DataFixtures;
 
 use App\Entity\Event;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 
-class EventFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
+class EventFixtures extends Fixture implements DependentFixtureInterface
 {
 
     public function getDependencies(): array
     {
         return [UserFixtures::class];
-    }
-
-    public static function getGroups(): array
-    {
-        return ['event'];
     }
 
     public function load(ObjectManager $manager): void
@@ -50,7 +44,7 @@ class EventFixtures extends Fixture implements DependentFixtureInterface, Fixtur
 
             $event = new Event();
             $event->setTitle($faker->words(5, true));
-            $event->setDescription($faker->words(30, true));
+            $event->setDescription($faker->words(50, true));
             $event->setStartDate($startDate);
             $event->setEndDate($endDate);
             $event->setIsPublic($faker->boolean(60));

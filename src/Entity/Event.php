@@ -11,7 +11,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[AllowDynamicProperties] #[ORM\Entity(repositoryClass: EventRepository::class)]
+#[AllowDynamicProperties]
+#[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\Table(name: 'events__events')]
 #[IsValidDate]
 class Event
@@ -49,8 +50,7 @@ class Event
     #[ORM\ManyToOne(inversedBy: 'events')]
     private ?User $owner = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'participantsEvents')]
-    #[ORM\JoinTable(name: 'events__participants')]
+    #[ORM\OneToMany(targetEntity: EventParticipants::class, mappedBy: 'event', cascade: ['persist', 'remove'])]
     private Collection $participants;
 
     #[ORM\Column]
