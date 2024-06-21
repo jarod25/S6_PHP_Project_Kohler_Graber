@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Event;
 
 use App\Entity\Event;
 use Symfony\Component\Form\AbstractType;
@@ -21,10 +21,7 @@ class EventType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Titre',
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez saisir un titre'),
-                ],
+                'required' => false,
             ])
             ->add('description', TextareaType::class, [
                 'row_attr' => [
@@ -33,35 +30,22 @@ class EventType extends AbstractType
                 'attr' => [
                     "data-ckeditor-target" => "txt",
                 ],
-                'required' => true,
+                'required' => false,
                 'label' => 'Description',
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez saisir une description'),
-                ],
             ])
             ->add('startDate', DateTimeType::class, [
                 'label' => 'Date de début',
-                'required' => true,
+                'required' => false,
                 'widget' => 'single_text',
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez saisir une date de début d\'événement'),
-                ],
             ])
             ->add('endDate', DateTimeType::class, [
                 'label' => 'Date de fin',
-                'required' => true,
+                'required' => false,
                 'widget' => 'single_text',
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez saisir une date de fin d\'événement'),
-                ],
             ])
             ->add('nbMaxParticipants', IntegerType::class, [
                 'label' => 'Nombre de participants',
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez saisir un nombre de participants'),
-                    new GreaterThan(0, message: 'Veuillez saisir un nombre de participants supérieur à 0')
-                ],
+                'required' => false,
             ])
             ->add('isPublic', ChoiceType::class, [
                 'required' => true,
@@ -71,6 +55,19 @@ class EventType extends AbstractType
                     'Non' => false,
                 ],
                 'expanded' => true,
+            ])
+            ->add('isPayable', ChoiceType::class, [
+                'required' => true,
+                'label' => 'Évènement payant ?',
+                'choices' => [
+                    'Oui' => true,
+                    'Non' => false,
+                ],
+                'expanded' => true,
+            ])
+            ->add('price', IntegerType::class, [
+                'label' => 'Prix',
+                'required' => false,
             ]);
     }
 
