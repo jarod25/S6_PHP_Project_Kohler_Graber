@@ -2,8 +2,3 @@ framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
 
-# TODO : A VIRER AVANT DE RENDRE
-when@dev:
-    framework:
-        mailer:
-            dsn: 'smtp://localhost:25'

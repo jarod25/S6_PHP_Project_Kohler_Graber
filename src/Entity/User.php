@@ -59,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->firstname;
     }
 
-    public function setFirstname(string $firstname): static
+    public function setFirstname(?string $firstname): static
     {
         $this->firstname = $firstname;
 
@@ -71,7 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): static
+    public function setLastname(?string $lastname): static
     {
         $this->lastname = $lastname;
 
@@ -83,7 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 

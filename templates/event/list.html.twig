@@ -52,6 +52,16 @@
                                 <strong>Nombre de places disponibles : </strong>
                                 {{ event.availablePlaces }}
                             </p>
+                            {% if event.price %}
+                                <p class="card-text">
+                                    <strong>Prix : </strong>
+                                    {{ event.price }} €
+                                </p>
+                            {% else %}
+                                <p class="card-text">
+                                    <strong>Événement Gratuit</strong>
+                                </p>
+                            {% endif %}
                             <div class="d-flex justify-content-center">
                                 <a href="{{ path('app_event_show', {id: event.id}) }}"
                                    class="btn btn-primary">Détails</a>

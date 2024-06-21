@@ -27,6 +27,7 @@ class EventRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->andWhere('e.isPublic = :isPublic')
             ->andWhere('e.nbMaxParticipants > :nbMaxParticipants')
+            ->andWhere('SIZE(e.participants) < e.nbMaxParticipants')
             ->setParameter('isPublic', 1)
             ->setParameter('nbMaxParticipants', 1)
             ->getQuery()

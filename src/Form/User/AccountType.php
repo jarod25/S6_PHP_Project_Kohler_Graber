@@ -28,6 +28,7 @@ class AccountType extends AbstractType
                         'message' => 'Veuillez saisir un prénom',
                     ]),
                 ],
+                'required' => false,
             ])
             ->add('lastname', TextType::class, [
                 'label' => 'Nom',
@@ -42,6 +43,7 @@ class AccountType extends AbstractType
                         'message' => 'Veuillez saisir un nom',
                     ]),
                 ],
+                'required' => false,
             ])
             ->add('email', TextType::class, [
                 'label' => 'Email',
@@ -59,6 +61,7 @@ class AccountType extends AbstractType
                         message: 'L\'adresse email n\'est pas valide',
                     ),
                 ],
+                'required' => false,
             ]);
     }
 

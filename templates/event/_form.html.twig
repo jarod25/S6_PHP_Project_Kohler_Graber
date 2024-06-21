@@ -62,8 +62,35 @@
             {{ form_errors(form.isPublic, {'attr': {'class': 'invalid-feedback d-block'}}) }}
         </div>
     </div>
+
+    <div class="mb-3">
+        {{ form_label(form.isPayable, null, {'label_attr': {'class': 'form-label me-3'}}) }}
+        <div class="form-check form-check-inline">
+            {{ form_widget(form.isPayable[0], {'attr': {'class': 'form-check-input'}}) }}
+            {{ form_label(form.isPayable[0], null, {'label_attr': {'class': 'form-check-label'}}) }}
+        </div>
+        <div class="form-check form-check-inline">
+            {{ form_widget(form.isPayable[1], {'attr': {'class': 'form-check-input'}}) }}
+            {{ form_label(form.isPayable[1], null, {'label_attr': {'class': 'form-check-label'}}) }}
+        </div>
+        <div class="text-danger">
+            {{ form_errors(form.isPayable, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+        </div>
+    </div>
+
+    <div data-controller="see-price" class="col-md-6">
+        <div class="mb-3 d-none" id="text_price">
+            {{ form_label(form.price, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.price, {'attr': {'class': 'invalid-feedback d-block'}}) }}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6"></div>
+
     {{ form_errors(form) }}
 
-    <button class="btn btn-success w-50">{{ button_label|default('Save') }}</button>
+    <button class="btn btn-success w-50" value="submit">Mettre à jour</button>
 </div>
 {{ form_end(form) }}

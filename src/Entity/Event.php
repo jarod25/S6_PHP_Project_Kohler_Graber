@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
 use App\Repository\EventRepository;
 use App\Validator\IsValidDate;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -10,7 +11,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: EventRepository::class)]
+#[AllowDynamicProperties] #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\Table(name: 'events__events')]
 #[IsValidDate]
 class Event
@@ -22,18 +23,24 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Veuillez saisir un titre')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: 'Veuillez saisir une description')]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank(message: 'Veuillez saisir une date de début d\'événement')]
     private ?\DateTime $startDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank(message: 'Veuillez saisir une date de fin d\'événement')]
     private ?\DateTime $endDate = null;
 
     #[ORM\Column]
+    #[Assert\GreaterThan(value: 0, message: 'Le nombre de participants doit être supérieur à 0')]
+    #[Assert\NotBlank(message: 'Veuillez saisir un nombre de participants')]
     private ?int $nbMaxParticipants = null;
 
     #[ORM\Column]
@@ -45,6 +52,14 @@ class Event
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'participantsEvents')]
     #[ORM\JoinTable(name: 'events__participants')]
     private Collection $participants;
+
+    #[ORM\Column]
+    private ?bool $isPayable = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Assert\GreaterThan(value: 0, message: 'Le prix doit être supérieur à 0')]
+    #[Assert\NotBlank(message: 'Veuillez saisir un prix')]
+    private ?int $price = null;
 
     public function __construct()
     {
@@ -85,7 +100,7 @@ class Event
         return $this->startDate;
     }
 
-    public function setStartDate(\DateTime $startDate): static
+    public function setStartDate(?\DateTime $startDate): static
     {
         $this->startDate = $startDate;
 
@@ -97,7 +112,7 @@ class Event
         return $this->endDate;
     }
 
-    public function setEndDate(\DateTime $endDate): static
+    public function setEndDate(?\DateTime $endDate): static
     {
         $this->endDate = $endDate;
 
@@ -160,6 +175,30 @@ class Event
     public function removeParticipant(User $participant): static
     {
         $this->participants->removeElement($participant);
+
+        return $this;
+    }
+
+    public function isIsPayable(): ?bool
+    {
+        return $this->isPayable;
+    }
+
+    public function setIsPayable(bool $isPayable): static
+    {
+        $this->isPayable = $isPayable;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?int $price): static
+    {
+        $this->price = $price;
 
         return $this;
     }
