@@ -57,6 +57,7 @@
 
             {% if app.user and app.user == event.owner %}
                 <div>
+                    <a class="btn btn-primary me-2" href="{{ path('app_participants', {id: event.id}) }}">Mes participants</a>
                     <a class="btn btn-primary me-2" href="{{ path('app_event_edit', {id: event.id}) }}">Modifier</a>
                     {{ include('event/partials/_delete_form.html.twig') }}
                 </div>
