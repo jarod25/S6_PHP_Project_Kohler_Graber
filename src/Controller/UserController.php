@@ -137,7 +137,13 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
-        $users = $event->getParticipants();
+        $userEvents = $event->getParticipants();
+
+        $users = [];
+        foreach ($userEvents as $userEvent) {
+            $users[] = $userEvent->getUser();
+        }
+
 
         $pagination = $this->paginator->paginate(
             $users,

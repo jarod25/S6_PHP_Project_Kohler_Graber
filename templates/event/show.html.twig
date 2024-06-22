@@ -26,9 +26,9 @@
                     </div>
                 </div>
                 {% if app.user %}
-                    {% if event.availablePlaces > 0 %}
                         {% if not isUserRegistered %}
-                            <form action="{{ path('app_event_register', {id: event.id}) }}" method="post">
+                            {% if event.availablePlaces > 0 %}
+                                <form action="{{ path('app_event_register', {id: event.id}) }}" method="post">
                                 <button class="btn btn-success" type="submit">
                                     {% if event.price %}
                                         Payer pour s'inscrire
@@ -37,14 +37,14 @@
                                     {% endif %}
                                 </button>
                             </form>
+                            {% else %}
+                                <p class="text-danger">Il n'y a plus de place disponible pour cet évènement.</p>
+                            {% endif %}
                         {% else %}
                             <form action="{{ path('app_event_unregister', {id: event.id}) }}" method="post">
                                 <button class="btn btn-danger" type="submit">Se désinscrire</button>
                             </form>
                         {% endif %}
-                    {% else %}
-                        <p class="text-danger">Il n'y a plus de place disponible pour cet évènement.</p>
-                    {% endif %}
                 {% else %}
                     <p class="text-danger">Vous devez être connecté pour vous inscrire à cet évènement.</p>
                     <a class="btn btn-primary" href="{{ path('app_login') }}">Se connecter</a>
