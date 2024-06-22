@@ -3,7 +3,11 @@
 namespace App\Service;
 
 use Stripe\Checkout\Session;
+use Stripe\Exception\SignatureVerificationException;
 use Stripe\StripeClient;
+use Stripe\Webhook;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class StripeService
 {
@@ -33,6 +37,27 @@ class StripeService
             'success_url' => $successUrl,
             'cancel_url' => $cancelUrl,
         ]);
+    }
+
+    public function getWebhooks(Request $request): array
+    {
+        $payload = $request->getContent();
+        $sigHeader = $request->headers->get('stripe-signature');
+
+        try {
+            $event = Webhook::constructEvent(
+                $payload, $sigHeader, $_ENV['STRIPE_WEBHOOK_SECRET']
+            );
+        } catch (SignatureVerificationException | \UnexpectedValueException $e) {
+            return ['error' => $e->getMessage()];
+        }
+
+        return match ($event->type) {
+            'payment_intent.succeeded' => ['status' => 'success'],
+            'payment_intent.failed' => ['status' => 'fail'],
+            'payment_intent.processing' => ['status' => 'processing'],
+            default => ['status' => 'unknown'],
+        };
     }
 
 }

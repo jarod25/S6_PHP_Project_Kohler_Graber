@@ -39,14 +39,14 @@ class EventVoter extends Voter
 
     }
 
-    private function canEdit(Event $event, User $user): bool
+    private function canEdit(Event $event, ?User $user): bool
     {
         return $event->getOwner() === $user;
     }
 
     private function canDelete(Event $event, User $user): bool
     {
-        return $event->getOwner() === $user;
+        return canEdit($event, $user);
     }
 
     private function canView(Event $event): bool

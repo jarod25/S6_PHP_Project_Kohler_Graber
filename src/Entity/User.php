@@ -133,28 +133,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Event>
+     * @return Collection
      */
-    public function getParticipantsEvents(): Collection
+    public function getEventParticipants(): Collection
     {
         return $this->participantsEvents;
     }
 
-    public function addParticipantsEvent(Event $participantsEvent): static
+    public function addEventParticipant(EventParticipants $eventParticipant): static
     {
-        if (!$this->participantsEvents->contains($participantsEvent)) {
-            $this->participantsEvents->add($participantsEvent);
-            $participantsEvent->addParticipant($this);
+        if (!$this->participantsEvents->contains($eventParticipant)) {
+            $this->participantsEvents[] = $eventParticipant;
+            $eventParticipant->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeParticipantsEvent(Event $participantsEvent): static
+    public function removeEventParticipant(EventParticipants $eventParticipant): static
     {
-        if ($this->participantsEvents->removeElement($participantsEvent)) {
-            $participantsEvent->removeParticipant($this);
-        }
+        $this->participantsEvents->removeElement($eventParticipant);
         return $this;
     }
 

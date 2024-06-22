@@ -48,42 +48,42 @@ class EventControllerTest extends WebTestCase
             'event[endDate]'           => '2024-07-10 17:00:00',
             'event[nbMaxParticipants]' => 50,
             'event[isPublic]'          => true,
+            'event[isPayable]'         => false
         ]);
         $client->submit($form);
 
         $this->assertResponseRedirects('/evenements/');
     }
 
-    // TODO : Compte Mailjet bloqué, impossible de tester l'envoi de mail
-//    public function testRegister()
-//    {
-//        $client = static::createClient();
-//        $em                 = static::getContainer()->get(EntityManagerInterface::class);
-//        $userPasswordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
-//        $userRepository     = static::getContainer()->get(UserRepository::class);
-//
-//        $existingUser = $userRepository->findOneBy(['email' => 'test1@example.com']);
-//        if ($existingUser) {
-//            $em->remove($existingUser);
-//            $em->flush();
-//        }
-//
-//        $user = new User();
-//        $user->setFirstname('Prenom 1');
-//        $user->setLastname('Nom 1');
-//        $user->setEmail('test1@example.com');
-//        $user->setRoles(['ROLE_USER']);
-//
-//        $hashedPassword = $userPasswordHasher->hashPassword($user, 'password');
-//        $user->setPassword($hashedPassword);
-//
-//        $em->persist($user);
-//        $em->flush();
-//
-//        $client->loginUser($user);
-//
-//        $client->request('GET', '/evenements/85/register');
-//
-//        $this->assertResponseRedirects('/evenements/85');
-//    }
+    public function testRegister()
+    {
+        $client = static::createClient();
+        $em                 = static::getContainer()->get(EntityManagerInterface::class);
+        $userPasswordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
+        $userRepository     = static::getContainer()->get(UserRepository::class);
+
+        $existingUser = $userRepository->findOneBy(['email' => 'test1@example.com']);
+        if ($existingUser) {
+            $em->remove($existingUser);
+            $em->flush();
+        }
+
+        $user = new User();
+        $user->setFirstname('Prenom 1');
+        $user->setLastname('Nom 1');
+        $user->setEmail('test1@example.com');
+        $user->setRoles(['ROLE_USER']);
+
+        $hashedPassword = $userPasswordHasher->hashPassword($user, 'password');
+        $user->setPassword($hashedPassword);
+
+        $em->persist($user);
+        $em->flush();
+
+        $client->loginUser($user);
+
+        $client->request('GET', '/evenements/45/register');
+
+        $this->assertResponseRedirects('/evenements/45');
+    }
 }

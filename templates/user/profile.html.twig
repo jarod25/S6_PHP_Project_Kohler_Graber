@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container mt-4">
+    <div class="container mt-4 w-75">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white text-center">
-                <h2>Modifier mon profil</h2>
+                <h2>Mon profil</h2>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -53,20 +53,20 @@
                             </div>
                             <div class="col-12" data-controller="pwd-strength" data-pwd-strength-strength-value="4" data-pwd-strength-position-value="left">
                                 <div data-controller="pwd-eye" class="form-floating">
-                                    {{ form_widget(form_pwd.pwd.password.first, {'attr': {'class': 'form-control',  'placeholder': 'Mot de passe', 'data-pwd-eye-target': 'input', 'data-action': 'pwd-strength#handleInput'}}) }}
-                                    {{ form_label(form_pwd.pwd.password.first, 'Mot de passe', {'label_attr': {'for': form_pwd.pwd.password.first.vars.id}}) }}
+                                    {{ form_widget(form_pwd.password.first, {'attr': {'class': 'form-control',  'placeholder': 'Mot de passe', 'data-pwd-eye-target': 'input', 'data-action': 'pwd-strength#handleInput'}}) }}
+                                    {{ form_label(form_pwd.password.first, 'Mot de passe', {'label_attr': {'for': form_pwd.password.first.vars.id}}) }}
                                 </div>
                                 <div class="text-danger">
-                                    {{ form_errors(form_pwd.pwd.password.first) }}
+                                    {{ form_errors(form_pwd.password.first) }}
                                 </div>
                                 <div class="tips-popover"></div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating" data-controller="pwd-eye">
-                                    {{ form_widget(form_pwd.pwd.password.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirmation du mot de passe', 'data-pwd-eye-target': 'input'}}) }}
-                                    {{ form_label(form_pwd.pwd.password.second, 'Confirmation du mot de passe', {'label_attr': {'for': form_pwd.pwd.password.second.vars.id}}) }}
+                                    {{ form_widget(form_pwd.password.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirmation du mot de passe', 'data-pwd-eye-target': 'input'}}) }}
+                                    {{ form_label(form_pwd.password.second, 'Confirmation du mot de passe', {'label_attr': {'for': form_pwd.password.second.vars.id}}) }}
                                     <div class="text-danger">
-                                        {{ form_errors(form_pwd.pwd.password.second) }}
+                                        {{ form_errors(form_pwd.password.second) }}
                                     </div>
                                 </div>
                             </div>

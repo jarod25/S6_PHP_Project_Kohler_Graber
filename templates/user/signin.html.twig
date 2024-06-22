@@ -13,47 +13,47 @@
                         <div class="row g-3">
                             <div class="col-12">
                                 <div class="form-floating">
-                                    {{ form_widget(form.user.firstname, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
-                                    {{ form_label(form.user.firstname, 'Prénom', {'label_attr': {'for': form.user.firstname.vars.id}}) }}
+                                    {{ form_widget(form.firstname, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+                                    {{ form_label(form.firstname, 'Prénom', {'label_attr': {'for': form.firstname.vars.id}}) }}
                                     <div class="text-danger">
-                                        {{ form_errors(form.user.firstname) }}
+                                        {{ form_errors(form.firstname) }}
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating">
-                                    {{ form_widget(form.user.lastname, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
-                                    {{ form_label(form.user.lastname, 'Nom', {'label_attr': {'for': form.user.lastname.vars.id}}) }}
+                                    {{ form_widget(form.lastname, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+                                    {{ form_label(form.lastname, 'Nom', {'label_attr': {'for': form.lastname.vars.id}}) }}
                                     <div class="text-danger">
-                                        {{ form_errors(form.user.lastname) }}
+                                        {{ form_errors(form.lastname) }}
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating">
-                                    {{ form_widget(form.user.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
-                                    {{ form_label(form.user.email, 'Email', {'label_attr': {'for': form.user.email.vars.id}}) }}
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+                                    {{ form_label(form.email, 'Email', {'label_attr': {'for': form.email.vars.id}}) }}
                                     <div class="text-danger">
-                                        {{ form_errors(form.user.email) }}
+                                        {{ form_errors(form.email) }}
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12" data-controller="pwd-strength" data-pwd-strength-strength-value="4" data-pwd-strength-position-value="left">
                                 <div data-controller="pwd-eye" class="form-floating">
-                                    {{ form_widget(form.pwd.password.first, {'attr': {'class': 'form-control',  'placeholder': 'Mot de passe', 'data-pwd-eye-target': 'input', 'data-action': 'pwd-strength#handleInput'}}) }}
-                                    {{ form_label(form.pwd.password.first, 'Mot de passe', {'label_attr': {'for': form.pwd.password.first.vars.id}}) }}
+                                    {{ form_widget(form.password.first, {'attr': {'class': 'form-control',  'placeholder': 'Mot de passe', 'data-pwd-eye-target': 'input', 'data-action': 'pwd-strength#handleInput'}}) }}
+                                    {{ form_label(form.password.first, 'Mot de passe', {'label_attr': {'for': form.password.first.vars.id}}) }}
                                     <div class="text-danger">
-                                        {{ form_errors(form.pwd.password.first) }}
+                                        {{ form_errors(form.password.first) }}
                                     </div>
                                 </div>
                                 <div class="tips-popover"></div>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating" data-controller="pwd-eye">
-                                    {{ form_widget(form.pwd.password.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirmation du mot de passe', 'data-pwd-eye-target': 'input'}}) }}
-                                    {{ form_label(form.pwd.password.second, 'Confirmation du mot de passe', {'label_attr': {'for': form.pwd.password.second.vars.id}}) }}
+                                    {{ form_widget(form.password.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirmation du mot de passe', 'data-pwd-eye-target': 'input'}}) }}
+                                    {{ form_label(form.password.second, 'Confirmation du mot de passe', {'label_attr': {'for': form.password.second.vars.id}}) }}
                                     <div class="text-danger">
-                                        {{ form_errors(form.pwd.password.second) }}
+                                        {{ form_errors(form.password.second) }}
                                     </div>
                                 </div>
                             </div>

@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Event;
 use App\Form\User\AccountType;
 use App\Form\User\ChangePasswordType;
+use App\Repository\EventRepository;
 use App\Repository\UserRepository;
+use App\Service\AvailablePlacesService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +22,9 @@ class UserController extends AbstractController
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly UserRepository         $userRepository
+        private readonly UserRepository         $userRepository,
+        private readonly EventRepository        $eventRepository,
+        private readonly PaginatorInterface     $paginator,
     )
     {
     }
@@ -96,4 +102,51 @@ class UserController extends AbstractController
             ]);
         }
     }
+
+    #[Route('/mes-evenements', name: 'app_event_my_events', methods: ['GET', 'POST'])]
+    public function myEvents(Request $request): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('danger', 'Vous devez être connecté pour voir vos événements');
+
+            return $this->redirectToRoute('app_login');
+        }
+
+        $events = $this->eventRepository->findEventsByUser($user);
+        $pagination = $this->paginator->paginate(
+            $events,
+            $request->query->getInt('page', 1),
+            6
+        );
+
+        return $this->render('event/my_events.html.twig', [
+            'pagination' => $pagination,
+        ]);
+    }
+
+    #[Route('/participants/{id}', name: 'app_participants', methods: ['GET'])]
+    public function myParticipants(Request $request, Event $event): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($event->getOwner() !== $user) {
+            return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
+        }
+
+        $users = $event->getParticipants();
+
+        $pagination = $this->paginator->paginate(
+            $users,
+            $request->query->getInt('page', 1),
+            6
+        );
+        return $this->render('user/my_participants.html.twig', [
+            'pagination' => $pagination,
+        ]);
+    }
+
 }

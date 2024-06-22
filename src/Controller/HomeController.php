@@ -46,32 +46,6 @@ class HomeController extends AbstractController
         );
 
         return $this->render('home/index.html.twig', [
-            'events' => $pagination,
-        ]);
-    }
-
-    #[Route('/mes-evenements', name: 'app_event_my_events', methods: ['GET', 'POST'])]
-    public function myEvents(Request $request): Response
-    {
-        $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('danger', 'Vous devez être connecté pour voir vos événements');
-
-            return $this->redirectToRoute('app_login');
-        }
-
-        $events = $user->getParticipantsEvents();
-        foreach ($events as $event) {
-            $event->availablePlaces = $this->availablePlacesService->calculateAvailablePlaces($event);
-        }
-
-        $pagination = $this->paginator->paginate(
-            $events->toArray(),
-            $request->query->getInt('page', 1),
-            6
-        );
-
-        return $this->render('event/my_events.html.twig', [
             'pagination' => $pagination,
         ]);
     }

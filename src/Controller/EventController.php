@@ -3,11 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Entity\EventParticipants;
+use App\Entity\User;
+use App\Enum\PaymentStatusEnum;
 use App\Event\Mail\ParticipantRegistrationEvent;
 use App\Event\Mail\ParticipantUnregistrationEvent;
 use App\Form\Event\EventFilterType;
 use App\Form\Event\EventType;
 use App\Model\EventSearch;
+use App\Repository\EventParticipantsRepository;
 use App\Repository\EventRepository;
 use App\Security\Voter\EventVoter;
 use App\Service\AvailablePlacesService;
@@ -23,11 +27,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class EventController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly EventRepository        $eventRepository,
-        private readonly PaginatorInterface     $paginator,
-        private readonly MailService            $mailService,
-        private readonly AvailablePlacesService $availablePlacesService,
+        private readonly EntityManagerInterface      $em,
+        private readonly EventRepository             $eventRepository,
+        private readonly PaginatorInterface          $paginator,
+        private readonly MailService                 $mailService,
+        private readonly AvailablePlacesService      $availablePlacesService,
+        private readonly EventParticipantsRepository $eventParticipantsRepository
     )
     {
     }
@@ -38,7 +43,7 @@ class EventController extends AbstractController
         $user = $this->getUser();
 
         $search = new EventSearch();
-        $form   = $this->createForm(EventFilterType::class, $search, ['user' => $user]);
+        $form = $this->createForm(EventFilterType::class, $search, ['user' => $user]);
         $form->handleRequest($request);
 
         if ($user)
@@ -58,8 +63,8 @@ class EventController extends AbstractController
 
         return $this->render('event/list.html.twig', [
             'pagination' => $pagination,
-            'form'       => $form->createView(),
-            'user'       => $user ?? null,
+            'form' => $form->createView(),
+            'user' => $user ?? null,
         ]);
     }
 
@@ -95,16 +100,21 @@ class EventController extends AbstractController
     #[Route('/{id}', name: 'app_event_show', methods: ['GET'])]
     public function show(Event $event): Response
     {
+        $user = $this->getUser();
+
         if (!$this->isGranted(EventVoter::VIEW, $event)) {
             $this->addFlash('danger', "Vous n'avez pas la permission de voir cet évènement.");
 
             return $this->redirectToRoute('app_event_index');
         }
 
+        $isUserRegistered = (bool)$this->eventParticipantsRepository->findOneBy(['user' => $user, 'event' => $event]);
+
         $event->availablePlaces = $this->availablePlacesService->calculateAvailablePlaces($event);
 
         return $this->render('event/show.html.twig', [
             'event' => $event,
+            'isUserRegistered' => $isUserRegistered
         ]);
     }
 
@@ -136,7 +146,7 @@ class EventController extends AbstractController
 
         return $this->render('event/edit.html.twig', [
             'event' => $event,
-            'form'  => $form->createView(),
+            'form' => $form->createView(),
         ]);
     }
 
@@ -162,35 +172,42 @@ class EventController extends AbstractController
     public function register(Request $request, Event $event): Response
     {
         $user = $this->getUser();
-        if (!$user) {
+        if (!$user instanceof User) {
             $this->addFlash('danger', 'Vous devez être connecté pour vous inscrire');
 
             return $this->redirectToRoute('app_login');
         }
 
-        if ($event->getParticipants()->contains($user)) {
-            $this->addFlash('error', 'Vous êtes déjà inscrit à cet événement.');
+        $isUserRegistered = (bool)$this->eventParticipantsRepository->findOneBy(['user' => $user, 'event' => $event]);
+
+        if ($isUserRegistered) {
+            $this->addFlash('danger', 'Vous êtes déjà inscrit à cet événement.');
 
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
         if ($this->availablePlacesService->calculateAvailablePlaces($event) <= 0) {
-            $this->addFlash('error', 'Le nombre maximal de participants est atteint.');
+            $this->addFlash('danger', 'Le nombre maximal de participants est atteint.');
 
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
-        if ($event->isIsPayable() && $event->getPrice() > 0) {
+        $participant = $this->eventParticipantsRepository->findOneBy(['user' => $user, 'event' => $event]);
+
+        if ($event->isIsPayable() && $event->getPrice() > 0 && (!$participant || !$participant->isHasPaid())) {
             return $this->redirectToRoute('app_pay_event', ['id' => $event->getId()]);
         }
 
-        $event->addParticipant($user);
+        $eventParticipant = new EventParticipants();
+        $eventParticipant->setEvent($event);
+        $eventParticipant->setUser($user);
+        $this->em->persist($eventParticipant);
         $this->em->flush();
 
         // Envoyer un email de confirmation
         $email = new ParticipantRegistrationEvent($user->getEmail());
         $email->setParams([
-            'user'  => $user,
+            'user' => $user,
             'event' => $event,
         ]);
         $this->mailService->sendEmail($email);
@@ -210,18 +227,20 @@ class EventController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        if (!$event->getParticipants()->contains($user)) {
-            $this->addFlash('error', 'Vous n\'êtes pas inscrit à cet événement.');
+        $userRegistered = $this->eventParticipantsRepository->findOneBy(['user' => $user, 'event' => $event]);
+
+        if ($userRegistered == null) {
+            $this->addFlash('danger', 'Vous n\'êtes pas inscrit à cet événement.');
 
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
-        $event->removeParticipant($user);
+        $this->em->remove($userRegistered);
         $this->em->flush();
 
         $email = new ParticipantUnRegistrationEvent($user->getEmail());
         $email->setParams([
-            'user'  => $user,
+            'user' => $user,
             'event' => $event,
         ]);
         $this->mailService->sendEmail($email);

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\PaymentStatusEnum;
 use App\Repository\EventParticipantsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,29 +12,50 @@ class EventParticipants
 {
 
     #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private int $id;
+
     #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'participants')]
-    #[ORM\JoinColumn(nullable: false)]
     private Event $event;
 
-    #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'participantsEvents')]
-    #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $paymentStatus = null;
+    #[ORM\Column(type: 'string', nullable: true, enumType: PaymentStatusEnum::class)]
+    private ?PaymentStatusEnum $paymentStatus = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?bool $hasPaid = null;
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
 
     public function getEvent(): Event
     {
         return $this->event;
     }
 
+    public function setEvent(?Event $event): static
+    {
+        $this->event = $event;
+
+        return $this;
+    }
+
+
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
     public function getPaymentStatus(): ?string
@@ -41,7 +63,7 @@ class EventParticipants
         return $this->paymentStatus;
     }
 
-    public function setPaymentStatus(?string $paymentStatus): static
+    public function setPaymentStatus(?PaymentStatusEnum $paymentStatus): static
     {
         $this->paymentStatus = $paymentStatus;
 

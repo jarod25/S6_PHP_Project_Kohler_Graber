@@ -14,7 +14,7 @@ readonly class MailService
 
     public function sendEmail(MailEvent $mailEvent): void    {
         $email = (new TemplatedEmail())
-            ->from('no-reply@kohler-graber.com')
+            ->from('kohler.jarod.2004@gmail.com')
             ->to($mailEvent->getEmail())
             ->subject($mailEvent->getSubject())
             ->text('')
